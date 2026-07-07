@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
+from fastapi import Response, status, HTTPException, Depends, APIRouter
 from .. import models,schemas, oauth2
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -19,7 +19,7 @@ def get_posts(db : Session = Depends(get_db), current_user: int = Depends(oauth2
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
 def create_posts(post: schemas.PostCreate, db : Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
-    new_post = models.Post(user_id=current_user.id, **post.model_dump())# model_dump() is equal to dict(), but pydentic v2 
+    new_post = models.Post(owner_id=current_user.id, **post.model_dump())# model_dump() is equal to dict(), but pydentic v2 
     db.add(new_post)
     db.commit()
     db.refresh(new_post) # *RETURNING
